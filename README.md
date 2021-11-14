@@ -37,3 +37,4 @@ Run with ```run.sh``` if using ```gunicorn3``` or set ```FLASK_APP=application\_
 - special formatting for quotes like > etc. 
 - stylize things like replies not having full width
 - make validation more robust
+- incorporate PIL to restrict max width/height
