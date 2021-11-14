@@ -4,27 +4,8 @@
 {% block title %}semchan{% endblock %}
 
 {% block styles %}
-{{ super() }}
-<style>
-    body {
-        background-color: rgb(225, 213, 235);
-        font-family: sans-serif;
-        font-size: small;
-    }
-    hr {
-        border: 1px solid rgb(124, 124, 124);
-        border-radius: 5px;
-    }
-    a {
-        color: rgb(221, 119, 207);
-    }
-    #post-title {
-        color:blueviolet;
-    }
-    .reply-bg {
-        background-color: rgb(208, 197, 218);
-    }
-</style>
+{{super()}}
+<link rel="stylesheet" href="{{url_for('.static', filename='style.css')}}">
 {% endblock %}
 
 {% block content %}
