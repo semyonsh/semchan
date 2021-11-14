@@ -4,6 +4,7 @@ from flask import abort
 from werkzeug.utils import secure_filename
 from azure.storage.blob import BlobServiceClient, ContentSettings
 from decouple import config
+from PIL import Image
 
 connect_str = config('AZURE_STORAGE_CONNECTION_STRING')
 image_url = config('IMAGE_URL')
@@ -22,6 +23,7 @@ def validate_image(stream):
         return None
     return '.' + (format if format != 'jpeg' else 'jpg')
 
+
 def upload_image(data):
     filename = secure_filename(data.filename)
 
@@ -32,6 +34,17 @@ def upload_image(data):
 
     image_stream = BytesIO()
     data.save(image_stream)
+    
+    #Check dimensions, if pixels exceed default limit of 178956970 it will error out with DecompressionBombError
+    try:
+        img = Image.open(image_stream)
+        size = img.size
+
+        if size[0] > 2000 or size[1] > 2000:
+            abort(400)
+    except:
+        abort(400)
+
     image_stream.seek(0)
 
     new_filename = str(secrets.token_urlsafe(16)) +  file_ext 
