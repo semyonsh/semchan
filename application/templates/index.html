@@ -1,0 +1,89 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/utils.html" as util %}
+
+{% block title %}semchan{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<style>
+    body {
+        background-color: rgb(225, 213, 235);
+        font-family: sans-serif;
+        font-size: small;
+    }
+    hr {
+        border: 1px solid rgb(124, 124, 124);
+        border-radius: 5px;
+    }
+    a {
+        color: rgb(221, 119, 207);
+    }
+    #post-title {
+        color:blueviolet;
+    }
+    .reply-bg {
+        background-color: rgb(208, 197, 218);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{{util.flashed_messages(dismissible=True)}}
+<div class="container-fluid" id="override-bootstrap">
+    <a href="{{ url_for('index') }}"><h1>semchan</h1></a>
+    <a href="/#reply"><p>create thread</p></a>
+    <br />
+    <hr>
+    <div class="row text-left">
+    <div class="col-md-12">
+    {% for thread in threads|sort(attribute='last_update', reverse = True) %}
+    <div id='{{ thread.RowKey }}'>
+        {% if thread.url %}
+        <a href={{ thread.url }}><img src="{{ thread.url }}" class="img-fluid" id="no-flow" style="width: 150px" /></a>
+        {% endif %}
+        <b>anon</b> {% if thread.title %}<b id="post-title">{{ thread.title }}</b> {% endif %}{{ thread.Timestamp.strftime('%c') }} <a href="thread/{{ thread.PartitionKey }}">reply</a>
+        <p></p>
+        <p>{{ thread.body }}</p>
+    </div>
+        {% for reply in replies|sort(attribute='Timestamp') %}
+            {% if reply.PartitionKey == thread.PartitionKey %}
+            <div id='{{ reply.RowKey }}' style="margin-left: 50px" class="reply-bg w-75">
+                {% if reply.url %}
+                <a href={{ reply.url }}><img src="{{ reply.url }}" class="img-fluid" style="width: 100px" /></a>
+                {% endif %}
+                <b>anon</b> {% if reply.title %}<b id="post-title">{{ reply.title }}</b> {% endif %}{{ reply.Timestamp.strftime('%c') }} <a href="thread/{{ reply.PartitionKey }}#{{ reply.RowKey }}">reply</a>
+                <p></p>
+                <p>{{ reply.body }}</p>
+            </div>
+            {% endif %}
+        {% endfor %}
+    <hr>
+    {% endfor %}
+    </div>
+</div>
+
+
+    <div class="row text-left">
+    <div class="col-md-3 body">
+    <form id="reply" method="POST" action="/thread" enctype="multipart/form-data" accept=".png, .jpeg, .jpg, .gif, .webp">
+        {{ form.csrf_token }}
+        <div class="form-group">
+            {{ form.title.label }}
+            {{ form.title(class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.body.label }}
+            {{ form.body(class_="form-control") }}
+        </div>
+        <div class="form-group">
+            jpeg/png/gif/webp 2MB
+            {{ form.upload(class_="form-control-file") }}
+          </div>
+        <button type="submit">Submit</button>
+        </form>
+    </div>
+    </div>
+    <br />
+
+</div>
+{% endblock %}    
