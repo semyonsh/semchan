@@ -47,7 +47,7 @@
     </div>
         {% for reply in replies|sort(attribute='Timestamp') %}
             {% if reply.PartitionKey == thread.PartitionKey %}
-            <div id='{{ reply.RowKey }}' style="margin-left: 50px" class="reply-bg w-75">
+            <div id='{{ reply.RowKey }}' style="margin-left: 20px" class="reply-bg w-75">
                 {% if reply.url %}
                 <a href={{ reply.url }}><img src="{{ reply.url }}" class="img-fluid" style="width: 100px" /></a>
                 {% endif %}
