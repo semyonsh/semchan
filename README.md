@@ -26,3 +26,11 @@ IMAGE_URL=https://image.website/
 ```
 
 Run with ```run.sh``` if using ```gunicorn3``` or set ```FLASK_APP=application\__init__.py``` in environment and use ```flask run```. 
+
+## todo
+
+- get rid of [this](https://github.com/semyonsh/semchan/blob/c1f19d8587b4d3f99d47b0eb585eb5133cf55959/application/main.py#L91), replace it with something meaningful
+- pagination and/or remove threads if above threshold of age/amount of threads
+- urlize thread and post ids
+- special formatting for quotes like > etc. 
+- stylize things like replies not having full width
