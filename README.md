@@ -1,10 +1,12 @@
 # semchan
 
 A Flask imageboard (in progress) powered by Azure Storage Account + Azure Table Storage 
+![image](https://user-images.githubusercontent.com/3471635/141687976-dbc1fc68-a531-45a8-9e37-e703d9205827.png)
 
 ## set-up
 ```bash
 pip install -r requirements.txt
+
 
 #requirements.txt
 flask
@@ -34,3 +36,4 @@ Run with ```run.sh``` if using ```gunicorn3``` or set ```FLASK_APP=application\_
 - urlize thread and post ids
 - special formatting for quotes like > etc. 
 - stylize things like replies not having full width
+- make validation more robust
