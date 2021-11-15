@@ -113,11 +113,17 @@ def favicon():
 
 @app.errorhandler(404)
 def page_not_found(e):
-    flash('Oops.. something went wrong', 'warning')
+    flash('Oops.. something went wrong', 'info')
     return redirect(url_for('index'))
 
 
 @app.errorhandler(400)
 def page_not_found(e):
-    flash('Sorry, that\'s not allowed', 'warning')
+    flash('Sorry, that\'s not allowed', 'danger')
     return redirect(url_for('index'))
+
+@app.errorhandler(413)
+def page_not_found(e):
+    flash('File is larger than 2MB', 'warning')
+    return redirect(url_for('index'))
+

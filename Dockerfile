@@ -1,8 +1,7 @@
 FROM python:3.9.8-slim
-COPY requirements.txt /
 EXPOSE 8000
-RUN pip3 install -r /requirements.txt
-COPY . /
-WORKDIR /
+COPY . /home
+WORKDIR /home
+RUN pip3 install -r requirements.txt
 RUN chmod +x run.sh
-ENTRYPOINT ["sh","/run.sh"]
+ENTRYPOINT ["sh","run.sh"]
