@@ -33,8 +33,8 @@ Run with ```run.sh``` if using ```gunicorn3``` or set ```FLASK_APP=application\_
 
 - get rid of [this](https://github.com/semyonsh/semchan/blob/c1f19d8587b4d3f99d47b0eb585eb5133cf55959/application/main.py#L91), replace it with something meaningful
 - pagination and/or remove threads if above threshold of age/amount of threads
+- dont show all replies on front page
 - urlize thread and post ids
 - special formatting for quotes like > etc. 
 - stylize things like replies not having full width
 - make validation more robust
-- incorporate PIL to restrict max width/height
