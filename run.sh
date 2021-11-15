@@ -1,2 +1,2 @@
-#!/bin/bash
-gunicorn3 -w 2 --bind 127.0.0.1:8081 --max-requests 500 wsgi:application
+#!/bin/sh
+gunicorn wsgi:application -w 2 --threads 2 -b 0.0.0.0:8000

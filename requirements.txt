@@ -6,3 +6,4 @@ flask-bootstrap
 Flask-Limiter
 python-decouple
 Pillow
+gunicorn
