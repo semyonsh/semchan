@@ -22,7 +22,7 @@
         {% if thread.url %}
         <a href={{ thread.url }}><img src="{{ thread.url }}" class="img-fluid" style="width: 200px" /></a>
         {% endif %}
-        <b>anon</b> {% if thread.title %}<b class="post-title">{{ thread.title }}</b> {% endif %}{{ thread.time_created.strftime('%c') }} {% if thread.reply_count != 0 %}<b>[{{ thread.reply_count }}]</b>{% endif %} <a href="thread/{{ thread.PartitionKey }}">reply to <i class="post-title">{{ thread.PartitionKey }}</i</a>
+        <b>anon</b> {% if thread.title %}<b class="post-title">{{ thread.title }}</b> {% endif %}{{ thread.time_created.strftime('%c') }} {% if thread.reply_count != 0 %}<b>[{{ thread.reply_count }}]</b>{% endif %} <a href="thread/{{ thread.PartitionKey }}">reply to <i class="post-title">{{ thread.PartitionKey }}</i></a>
         <p></p>
         <p>{{ thread.body }}</p>
     </div>
