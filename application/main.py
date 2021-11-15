@@ -67,18 +67,16 @@ def post_thread():
 
         thread_id = str(secrets.token_urlsafe(8))
         post_id = str(secrets.token_urlsafe(6))
-        last_update = datetime.utcnow()
+        time_created = datetime.utcnow()
 
         # noinspection SpellCheckingInspection
-        semchan_table = dbPost('thread', thread_id, post_id, form.title.data, form.body.data, url)
+        semchan_table = dbPost('thread', thread_id, post_id, form.title.data, form.body.data, url, time_created, 0)
         semchan_table.add_row()
-
-        db_update_thread(thread_id, post_id, last_update)
 
     return redirect(url_for('index'))
 
 
-# noinspection SpellCheckingInspection
+
 @app.route('/reply/<thread_id>', methods=['POST'])
 @limiter.limit("1/second", override_defaults=False)
 def post_reply(thread_id):
@@ -90,18 +88,17 @@ def post_reply(thread_id):
         else:
             url = None
 
+        time_created = datetime.utcnow()
+
         semchan_table = dbPost('reply', str(thread_id), str(secrets.token_urlsafe(6)), form.title.data, form.body.data,
-                               url)
+                               url, time_created, 0)
         semchan_table.add_row()
 
         thread = list(db_get(thread_id, False, 'thread'))
         post_id = thread[0].RowKey
 
-        """We might not even have to add a last_update as the native 'Timestamp' gets updated when the item gets updated
-        would be better to record amount of replies instead to have some updating mechanism for the thread so we use 
-        it to sort updated threads first, recording two timestamps is not smart but it does what we want for now"""
-        last_update = datetime.utcnow()
-        db_update_thread(thread_id, post_id, last_update)
+        reply_count = int(thread[0].reply_count) + 1
+        db_update_thread(thread_id, post_id, reply_count)
 
     return redirect(url_for('thread', thread_id=thread_id))
 

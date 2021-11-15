@@ -10,13 +10,15 @@ usr_post = Entity()
 
 
 class dbPost:
-    def __init__(self, post_type, thread_id, post_id, title, body, url):
+    def __init__(self, post_type, thread_id, post_id, title, body, url, time_created=None, reply_count=0):
         self.post_type = post_type
         self.thread_id = thread_id
         self.post_id = post_id
         self.title = title
         self.body = body
         self.url = url
+        self.time_created = time_created
+        self.reply_count = reply_count
 
     def add_row(self):
         usr_post.PartitionKey = self.thread_id
@@ -25,6 +27,8 @@ class dbPost:
         usr_post.title = self.title
         usr_post.body = self.body
         usr_post.url = self.url
+        usr_post.time_created = self.time_created
+        usr_post.reply_count = self.reply_count
 
         connect_db.insert_entity('semchan', usr_post)
 
@@ -45,9 +49,9 @@ def db_get(thread_id, post_id, post_type):
     return posts
 
 
-def db_update_thread(thread_id, post_id, last_update):
+def db_update_thread(thread_id, post_id, reply_count):
     thread = {'PartitionKey': thread_id,
               'RowKey': post_id,
-              'last_update': last_update}
+              'reply_count': reply_count}
 
     connect_db.merge_entity('semchan', thread)
