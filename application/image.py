@@ -1,20 +1,24 @@
-import os, secrets, imghdr
+import imghdr
+import os
+import secrets
 from io import BytesIO
-from flask import abort
-from werkzeug.utils import secure_filename
+
+from PIL import Image
 from azure.storage.blob import BlobServiceClient, ContentSettings
 from decouple import config
-from PIL import Image
+from flask import abort
+from werkzeug.utils import secure_filename
 
 connect_str = config('AZURE_STORAGE_CONNECTION_STRING')
 image_url = config('IMAGE_URL')
 
 blob_service_client = BlobServiceClient.from_connection_string(connect_str)
-container_client=blob_service_client.get_container_client('$web')
+container_client = blob_service_client.get_container_client('$web')
 
 upload_extensions = ['.jpg', '.png', '.gif', 'jpeg', 'webp']
 
-#https://blog.miguelgrinberg.com/post/handling-file-uploads-with-flask
+
+# https://blog.miguelgrinberg.com/post/handling-file-uploads-with-flask
 def validate_image(stream):
     header = stream.read(512)  # 512 bytes should be enough for a header check
     stream.seek(0)  # reset stream pointer
@@ -34,8 +38,8 @@ def upload_image(data):
 
     image_stream = BytesIO()
     data.save(image_stream)
-    
-    #Check dimensions, if pixels exceed default limit of 178956970 it will error out with DecompressionBombError
+
+    # Check dimensions, if pixels exceed default limit of 178956970 it will error out with DecompressionBombError
     try:
         img = Image.open(image_stream)
         size = img.size
@@ -47,14 +51,14 @@ def upload_image(data):
 
     image_stream.seek(0)
 
-    new_filename = str(secrets.token_urlsafe(16)) +  file_ext 
+    new_filename = str(secrets.token_urlsafe(16)) + file_ext
     blob_client = blob_service_client.get_blob_client(container="$web", blob=new_filename)
 
     mime_type = ContentSettings(content_type='image/' + file_ext.strip('.'))
 
     blob_client.upload_blob(image_stream.read(), content_settings=mime_type)
 
-    #set IMAGE_URL in .env to return URL for storage account/cname you set to storage account
+    # set IMAGE_URL in .env to return URL for storage account/cname you set to storage account
     url = image_url + new_filename
 
     return url

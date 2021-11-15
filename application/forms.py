@@ -3,7 +3,8 @@ from flask_wtf.file import FileField, FileRequired, FileAllowed
 from wtforms import StringField, SubmitField, TextAreaField
 from wtforms.validators import InputRequired, Length
 
-class form_post(FlaskForm):
+
+class formPost(FlaskForm):
     title = StringField(u'title', [Length(max=100)])
     body = TextAreaField(u'body', [InputRequired(), Length(max=1000)])
     upload = FileField('image', validators=[

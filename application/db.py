@@ -8,7 +8,8 @@ account_key = config('AZURE_STORAGE_ACCOUNT_KEY')
 connect_db = TableService(account_name=account_name, account_key=account_key)
 usr_post = Entity()
 
-class db_post:
+
+class dbPost:
     def __init__(self, post_type, thread_id, post_id, title, body, url):
         self.post_type = post_type
         self.thread_id = thread_id
@@ -27,12 +28,14 @@ class db_post:
 
         connect_db.insert_entity('semchan', usr_post)
 
-#we don't use the post_id yet in queries but could be useful in the future
-def db_get(thread_id=False, post_id=False, post_type=False):
-    if thread_id == False and post_id == False and post_type == False:
+
+# we don't use the post_id yet in queries but could be useful in the future
+def db_get(thread_id, post_id, post_type):
+    if thread_id is False and post_id is False and post_type is False:
         posts = connect_db.query_entities('semchan')
     elif thread_id and post_type:
-        posts = connect_db.query_entities('semchan', filter="PartitionKey eq '" + thread_id + "' and post_type eq '" + post_type + "'")
+        posts = connect_db.query_entities('semchan',
+                                          filter="PartitionKey eq '" + thread_id + "' and post_type eq '" + post_type + "'")
     elif thread_id:
         posts = connect_db.query_entities('semchan', filter="PartitionKey eq '" + thread_id + "'")
     elif post_id:
@@ -41,9 +44,10 @@ def db_get(thread_id=False, post_id=False, post_type=False):
         posts = connect_db.query_entities('semchan', filter="post_type eq '" + post_type + "'")
     return posts
 
+
 def db_update_thread(thread_id, post_id, last_update):
-    thread = {'PartitionKey': thread_id, 
-            'RowKey': post_id,
-            'last_update': last_update}
+    thread = {'PartitionKey': thread_id,
+              'RowKey': post_id,
+              'last_update': last_update}
 
     connect_db.merge_entity('semchan', thread)
