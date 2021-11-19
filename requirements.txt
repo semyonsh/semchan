@@ -1,0 +1,10 @@
+flask
+azure-storage-blob
+azure-cosmosdb-table
+Flask-WTF
+bootstrap-flask
+Flask-Limiter
+python-decouple
+Pillow
+filetype
+gunicorn

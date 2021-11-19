@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% from 'bootstrap/utils.html' import render_messages %}
+
+{% block content %}
+{{ render_messages() }}
+<div class="container-fluid">
+    <a href="{{ url_for('index') }}"><h1>semchan</h1></a>
+    <a href="/#reply"><p>create thread</p></a>
+    <br />
+    <hr>
+    {% for thread in threads|sort(attribute='Timestamp', reverse = True) %}
+    {% set replies = [] %}
+    {% for reply in all_replies|sort(attribute="time_created") if reply.PartitionKey == thread.PartitionKey %}
+            {%- do replies.append(reply) -%}
+    {% endfor %}
+    <div class="row">
+        {% if thread.url %}
+        <div class="col-xs-4 ml-3">
+            <a href={{ thread.url }}><img src="{% if thread.thumb_url %}{{ thread.thumb_url }}{% else %}{{ thread.url }}{% endif %}" style="width: 200px" /></a>
+        </div>
+        {% endif %}
+        <div class="col-xs-auto ml-2" id="{{ thread.PartitionKey }}">
+            <p>{% if thread.title %}<b class="post-title">{{ thread.title }}</b>{% endif %} <b>anon</b> {{ thread.time_created.strftime('%c') }} <a href="thread/{{ thread.PartitionKey }}">{{ thread.PartitionKey}}</a> <a href="thread/{{ thread.PartitionKey }}?reply={{ thread.PartitionKey }}" class="reply">[reply]</a></p>
+            <p>{{ thread.body }}</p>
+        </div>
+    </div>
+    {% if thread.reply_count <= 2 %}
+    {% for reply in replies %}
+    <div class="row">
+        <div class="col-md-auto ml-5 mt-2 reply-bg" id="{{ reply.RowKey }}">
+            <p>{% if reply.title %}<b class="post-title">{{ reply.title }}</b>{% endif %} <b>anon</b> {{ reply.time_created.strftime('%c') }} <a href="thread/{{ reply.PartitionKey }}">{{ reply.RowKey}}</a> <a href="thread/{{ reply.PartitionKey }}?reply={{ reply.RowKey }}" class="reply"> [reply]</a></p>
+            {% if reply.url %}
+            <a href={{ reply.url }}><img src="{% if reply.thumb_url %}{{ reply.thumb_url }}{% else %}{{ reply.url }}{% endif %}" class="float-left mr-3" style="width: 150px"/></a>
+            {% endif %}
+                {% if reply.body.startswith('>') %}
+                    {% set link = 'thread/' + reply.PartitionKey + '#' + reply.body[1:9] %}
+                    <a href="{{ link }}" class="reply">{{ reply.body[0:9] }}</a>
+                    <p></p>
+                    <p>{{ reply.body.replace(reply.body[0:9], '')}}</p>
+                {% else %}
+                    <p>{{ reply.body }}</p>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    {% if thread.reply_count > 2 %}
+    <div class="row">
+        <div class="col-md-auto ml-5 mt-2">
+            <p><a href="thread/{{ thread.PartitionKey }}"><b class="post-title">[{{ thread.reply_count }}]</b> comments, click to read more</a></p>
+        </div>
+    </div>
+    {% endif %}
+    {% for reply in replies[-2:] %}
+    <div class="row">
+        <div class="col-md-auto ml-5 mt-2 reply-bg" id="{{ reply.RowKey }}">
+            <p>{% if reply.title %}<b class="post-title">{{ reply.title }}</b>{% endif %} <b>anon</b> {{ reply.time_created.strftime('%c') }} <a href="thread/{{ reply.PartitionKey }}">{{ reply.RowKey}}</a> <a href="thread/{{ reply.PartitionKey }}?reply={{ reply.RowKey }}" class="reply"> [reply]</a></p>
+            {% if reply.url %}
+            <a href={{ reply.url }}><img src="{% if reply.thumb_url %}{{ reply.thumb_url }}{% else %}{{ reply.url }}{% endif %}" class="float-left mr-3" style="width: 150px"/></a>
+            {% endif %}
+                {% if reply.body.startswith('>') %}
+                    {% set link = 'thread/' + reply.PartitionKey + '#' + reply.body[1:9] %}
+                    <a href="{{ link }}" class="reply">{{ reply.body[0:9] }}</a>
+                    <p></p>
+                    <p>{{ reply.body.replace(reply.body[0:9], '')}}</p>
+                {% else %}
+                    <p>{{ reply.body }}</p>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+    <hr>
+    {% endfor %}
+
+    <div class="row">
+        <div class="col-md-3 body">
+        <form id="reply" method="POST" action="/thread" enctype="multipart/form-data" accept="image/png, image/jpeg, image/jpg, image/gif, image/webp">
+            {{ form.csrf_token }}
+            <div class="form-group">
+                {{ form.title.label }}
+                {{ form.title(class_="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ form.body.label }}
+                {{ form.body(class_="form-control") }}
+            </div>
+            <div class="form-group">
+                jpeg/png/gif/webp 5MB
+                {{ form.upload(class_="form-control-file") }}
+              </div>
+            <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+    <br />
+
+</div>
+{% endblock %}    
