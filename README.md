@@ -14,7 +14,7 @@ Create an .env file in root folder (Or load environment variables in the way of 
 AZURE_STORAGE_ACCOUNT_NAME=
 AZURE_STORAGE_ACCOUNT_KEY=
 AZURE_STORAGE_CONNECTION_STRING=
-SECRET_KEY=changeme
+AZURE_TABLE_STORAGE_NAME=semchan
 IMAGE_URL=https://image.website/
 ```
 
