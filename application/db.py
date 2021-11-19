@@ -4,6 +4,7 @@ from azure.cosmosdb.table.tableservice import TableService
 
 account_name = config('AZURE_STORAGE_ACCOUNT_NAME')
 account_key = config('AZURE_STORAGE_ACCOUNT_KEY')
+table = config('AZURE_TABLE_STORAGE_NAME')
 
 connect_db = TableService(account_name=account_name, account_key=account_key)
 usr_post = Entity()
@@ -32,22 +33,22 @@ class dbPost:
         usr_post.time_created = self.time_created
         usr_post.reply_count = self.reply_count
 
-        connect_db.insert_entity('semchan', usr_post)
+        connect_db.insert_entity(table, usr_post)
 
 
 # we don't use the post_id yet in queries but could be useful in the future
 def db_get(thread_id, post_id, post_type):
     if thread_id is False and post_id is False and post_type is False:
-        posts = connect_db.query_entities('semchan')
+        posts = connect_db.query_entities(table)
     elif thread_id and post_type:
-        posts = connect_db.query_entities('semchan',
+        posts = connect_db.query_entities(table,
                                           filter="PartitionKey eq '" + thread_id + "' and post_type eq '" + post_type + "'")
     elif thread_id:
-        posts = connect_db.query_entities('semchan', filter="PartitionKey eq '" + thread_id + "'")
+        posts = connect_db.query_entities(table, filter="PartitionKey eq '" + thread_id + "'")
     elif post_id:
-        posts = connect_db.query_entities('semchan', filter="RowKey eq '" + post_id + "'")
+        posts = connect_db.query_entities(table, filter="RowKey eq '" + post_id + "'")
     elif post_type:
-        posts = connect_db.query_entities('semchan', filter="post_type eq '" + post_type + "'")
+        posts = connect_db.query_entities(table, filter="post_type eq '" + post_type + "'")
     return posts
 
 
@@ -56,4 +57,4 @@ def db_update_thread(thread_id, post_id, reply_count):
               'RowKey': post_id,
               'reply_count': reply_count}
 
-    connect_db.merge_entity('semchan', thread)
+    connect_db.merge_entity(table, thread)
